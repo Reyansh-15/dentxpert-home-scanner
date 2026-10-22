@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>DENTXPERT | Video Player</title>
+  <link rel="stylesheet" href="player.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="brand-header">
+      <div class="brand-lockup">
+        <img class="brand-mark" src="assets/dentxpert-brand-mark-trimmed.png" alt="">
+        <div>
+          <div class="brand-name">DENTXPERT</div>
+          <div class="brand-tagline">Oral Health. Understood.</div>
+        </div>
+      </div>
+      <span class="local-badge"><span class="badge-dot"></span> CONCEPT VIDEO · CAPTIONS DRAFT</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">DENTXPERT CONCEPT FILM</p>
+        <h1 id="page-title">DENTXPERT concept film</h1>
+          <p class="intro-copy">Explore the proposed DENTXPERT concept film with selectable English draft captions and playback speeds.</p>
+      </section>
+
+      <section class="review-note" aria-label="Caption verification status">
+        <span class="status-chip">DRAFT CAPTIONS</span>
+        <p>These English captions are drafts. A human listening check is still needed before the wording and timing can be marked verified.</p>
+      </section>
+
+      <section class="player-panel" aria-label="DENTXPERT full review video player">
+        <div class="video-frame">
+          <video id="video" controls playsinline preload="metadata" poster="assets/scanner-hero-trimmed.png" aria-label="DENTXPERT full six-scene web player video with human narration">
+            <source src="DENTXPERT_Web_Player.mp4" type="video/mp4">
+            <track id="english-track" kind="subtitles" src="dentxpert_en_draft.vtt" srclang="en" label="English (draft)" default>
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+
+        <div class="player-toolbar">
+          <label class="speed-control" for="playback-speed">
+            <span class="control-label">Playback speed</span>
+            <select id="playback-speed" name="playback-speed" aria-label="Playback speed">
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.50×</option>
+              <option value="0.75">0.75×</option>
+              <option value="1" selected>1.00×</option>
+              <option value="1.25">1.25×</option>
+              <option value="1.5">1.50×</option>
+              <option value="1.75">1.75×</option>
+              <option value="2">2.00×</option>
+              <option value="2.25">2.25×</option>
+              <option value="2.5">2.50×</option>
+              <option value="2.75">2.75×</option>
+              <option value="3">3.00×</option>
+            </select>
+          </label>
+
+          <div class="caption-control">
+            <span class="control-label">English subtitles</span>
+            <button id="captions-toggle" class="caption-toggle" type="button" aria-pressed="true" aria-controls="video">
+              <span class="toggle-indicator" aria-hidden="true"></span>
+              <span id="caption-button-label">On · draft</span>
+            </button>
+          </div>
+
+          <div class="downloads">
+            <span class="control-label">Caption files</span>
+            <div class="download-links">
+              <a href="dentxpert_en_draft.srt" download>Download SRT</a>
+              <a href="dentxpert_en_draft.vtt" download>Download WebVTT</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-status" aria-live="polite">
+          <span id="playback-status">Ready · 1.00×</span>
+          <span id="caption-status">English captions on · draft</span>
+        </div>
+      </section>
+
+      <section class="preview-meta" aria-label="Review render source details">
+        <div class="meta-icon" aria-hidden="true">56</div>
+        <div>
+          <h2>Six-scene concept film</h2>
+          <p>This 56.2-second concept film includes the original human narration. Selectable captions are drafts and require human verification.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>PROPOSED CONCEPT · NOT A CLINICALLY VALIDATED MEDICAL DEVICE</span>
+      <span>Draft captions · narrator permission required before public sharing</span>
+    </footer>
+  </div>
+  <script src="player.js"></script>
+</body>
+</html>
+
+
