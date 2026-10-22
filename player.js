@@ -1,4 +1,6 @@
 (() => {
+  document.documentElement.classList.add("js");
+
   const video = document.getElementById("video");
   const rateSelect = document.getElementById("playback-speed");
   const captionsToggle = document.getElementById("captions-toggle");
@@ -9,27 +11,33 @@
   const allowedRates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
   let captionsEnabled = true;
 
+  if (!video || !rateSelect || !captionsToggle || !captionButtonLabel || !playbackStatus || !captionStatus || !englishTrack) {
+    return;
+  }
+
   const formatRate = (rate) => Number(rate).toFixed(2) + "×";
 
   function setCaptionState(enabled) {
     captionsEnabled = enabled;
     const textTrack = video.textTracks && video.textTracks[0];
-    if (textTrack) {
-      textTrack.mode = enabled ? "showing" : "hidden";
-    }
+    if (textTrack) textTrack.mode = enabled ? "showing" : "hidden";
     captionsToggle.setAttribute("aria-pressed", String(enabled));
-    captionButtonLabel.textContent = enabled ? "On · draft" : "Off";
-    captionStatus.textContent = enabled ? "English captions on · draft" : "English captions off";
+    captionButtonLabel.textContent = enabled ? "On · project draft" : "Off";
+    captionStatus.textContent = enabled ? "English captions on · project draft" : "English captions off";
   }
 
   function setPlaybackRate(value) {
     const rate = Number(value);
-    if (!allowedRates.includes(rate)) return;
+    if (!allowedRates.includes(rate)) {
+      rateSelect.value = String(video.playbackRate);
+      return;
+    }
     try {
       video.playbackRate = rate;
       video.defaultPlaybackRate = 1;
       playbackStatus.textContent = "Ready · " + formatRate(video.playbackRate);
     } catch (error) {
+      rateSelect.value = String(video.playbackRate);
       playbackStatus.textContent = "This browser could not apply " + formatRate(rate);
     }
   }
@@ -62,9 +70,12 @@
   video.addEventListener("ended", () => {
     playbackStatus.textContent = "Video ended · " + formatRate(video.playbackRate);
   });
+  video.addEventListener("waiting", () => {
+    playbackStatus.textContent = "Buffering · " + formatRate(video.playbackRate);
+  });
   video.addEventListener("error", () => {
     const source = video.querySelector("source")?.getAttribute("src") || "the video file";
-    playbackStatus.textContent = "Video unavailable · confirm " + source + " is present and supported.";
+    playbackStatus.textContent = "Video unavailable · check that " + source + " is present and supported.";
   });
   englishTrack.addEventListener("load", () => setCaptionState(captionsEnabled));
   englishTrack.addEventListener("error", () => {
