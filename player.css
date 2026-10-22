@@ -196,7 +196,7 @@ video::cue {
   color: #fff;
   background: rgba(5, 17, 30, 0.9);
   font-family: Inter, "Segoe UI", Arial, sans-serif;
-  font-size: 4%;
+  font-size: clamp(16px, 2vw, 32px);
   font-weight: 700;
   line-height: 1.3;
   text-shadow: none;
