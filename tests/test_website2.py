@@ -77,5 +77,25 @@ class SiteChecks(unittest.TestCase):
         self.assertIn("require manual audio verification", home)
         self.assertIn("usage rights", home)
 
+
+    def test_accessible_navigation_structure(self):
+        for slug in SLUGS:
+            with self.subTest(page=slug):
+                html = (SITE / (slug + ".html")).read_text(encoding="utf-8")
+                self.assertIn('aria-controls="primary-nav"', html)
+                self.assertIn('aria-label="Main navigation"', html)
+                self.assertIn('id="menu-button"', html)
+                self.assertIn('id="theme-toggle"', html)
+                self.assertIn('aria-pressed="false"', html)
+                self.assertIn('lang="en"', html)
+
+    def test_mobile_menu_dismissal_handlers(self):
+        js = (SITE / "site.js").read_text(encoding="utf-8")
+        self.assertIn("closeMenu(true)", js)
+        self.assertIn("nav?.addEventListener('click'", js)
+        self.assertIn("document.addEventListener('click'", js)
+        self.assertIn("window.addEventListener('resize'", js)
+        self.assertIn("menu.setAttribute('aria-expanded','false')", js)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
