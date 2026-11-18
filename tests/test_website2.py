@@ -73,9 +73,9 @@ class SiteChecks(unittest.TestCase):
         self.assertIn("[data-theme=dark]", css)
     def test_film_caption_disclosure(self):
         home = (SITE / "home.html").read_text(encoding="utf-8")
-        self.assertIn('kind="subtitles"', home)
-        self.assertIn("require manual audio verification", home)
-        self.assertIn("usage rights", home)
+        self.assertNotIn("<video", home)
+        self.assertIn("withheld", home)
+        self.assertIn("permissions", home)
 
 
     def test_accessible_navigation_structure(self):
