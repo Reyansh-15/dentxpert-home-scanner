@@ -29,11 +29,20 @@ def main():
                 # so exercise them once per viewport without navigating away
                 # from the page currently being captured.
                 if slug == "home":
+                    page.wait_for_selector(".scanner-overlay")
                     toggle = page.locator("#theme-toggle")
                     toggle.click()
                     assert toggle.get_attribute("aria-pressed") == "true", (width, slug, "theme toggle")
                     toggle.click()
                     assert toggle.get_attribute("aria-pressed") == "false", (width, slug, "theme reset")
+                    scanner = page.locator(".hero-visual")
+                    scanner.click()
+                    assert scanner.get_attribute("aria-expanded") == "true", (width, slug, "scanner overlay")
+                    scanner.press("Escape")
+                    assert scanner.get_attribute("aria-expanded") == "false", (width, slug, "scanner overlay close")
+                    concept = page.locator(".concept").first
+                    concept.click()
+                    assert concept.get_attribute("aria-pressed") == "true", (width, slug, "concept selection")
                 if width <= 720 and slug == "home":
                     menu = page.locator("#menu-button")
                     menu.click()
