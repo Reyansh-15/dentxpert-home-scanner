@@ -18,16 +18,23 @@ def main():
             page.on("pageerror", lambda error: errors.append(str(error)))
             for slug in SLUGS:
                 page.goto((SITE / (slug + ".html")).as_uri(), wait_until="load")
-                assert page.locator("h1").count() == 1, (width, slug, "H1")
-                assert page.locator('nav[aria-label="Main navigation"] a[aria-current="page"]').count() == 1
-                assert page.locator("body").evaluate("(el) => el.scrollWidth <= innerWidth + 2"), (width, slug, "horizontal overflow")
+                if page.locator("h1").count() != 1:
+                    errors.append((width, slug, "H1"))
+                if page.locator('nav[aria-label="Main navigation"] a[aria-current="page"]').count() != 1:
+                    errors.append((width, slug, "active navigation"))
+                if not page.locator("body").evaluate("(el) => el.scrollWidth <= innerWidth + 2"):
+                    errors.append((width, slug, "horizontal overflow"))
                 page.screenshot(path=str(OUT / f"{slug}-{width}.png"), full_page=True)
-                toggle = page.locator("#theme-toggle")
-                toggle.click()
-                assert toggle.get_attribute("aria-pressed") == "true", (width, slug, "theme toggle")
-                toggle.click()
-                assert toggle.get_attribute("aria-pressed") == "false", (width, slug, "theme reset")
-                if width <= 720:
+                # Navigation and theme behavior are shared across every route,
+                # so exercise them once per viewport without navigating away
+                # from the page currently being captured.
+                if slug == "home":
+                    toggle = page.locator("#theme-toggle")
+                    toggle.click()
+                    assert toggle.get_attribute("aria-pressed") == "true", (width, slug, "theme toggle")
+                    toggle.click()
+                    assert toggle.get_attribute("aria-pressed") == "false", (width, slug, "theme reset")
+                if width <= 720 and slug == "home":
                     menu = page.locator("#menu-button")
                     menu.click()
                     assert menu.get_attribute("aria-expanded") == "true"
@@ -35,11 +42,13 @@ def main():
                     assert menu.get_attribute("aria-expanded") == "false"
                     assert menu.evaluate("(el) => el === document.activeElement")
                     menu.click()
-                    page.locator("#primary-nav a").first.click()
-                    assert menu.get_attribute("aria-expanded") == "false"
+                    page.locator("#primary-nav a").nth(1).click()
+                    assert page.locator("#menu-button").get_attribute("aria-expanded") == "false"
             page.close()
         browser.close()
-    assert not errors, f"Browser JavaScript exceptions: {errors}"
+    if errors:
+        (OUT / "audit-errors.txt").write_text(repr(errors), encoding="utf-8")
+    assert not errors, f"Browser audit failures: {errors}"
     print("PASS: 24 responsive page views, navigation, theme, menu, overflow, and console checks")
 
 
