@@ -29,7 +29,7 @@ def main():
                 # so exercise them once per viewport without navigating away
                 # from the page currently being captured.
                 if slug == "home":
-                    page.wait_for_selector(".scanner-overlay")
+                    page.wait_for_selector(".scanner-overlay", state="attached")
                     toggle = page.locator("#theme-toggle")
                     toggle.evaluate("(el) => el.click()")
                     if toggle.get_attribute("aria-pressed") != "true":
