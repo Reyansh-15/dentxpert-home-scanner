@@ -1,0 +1,39 @@
+name: Website 2.0 checks
+
+on:
+  pull_request:
+    paths:
+      - "website2/**"
+      - "tests/**"
+      - ".github/workflows/website2-ci.yml"
+  push:
+    branches:
+      - "redesign/website-2-premium"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install browser test runtime
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Run structural and safety tests
+        run: |
+          python -m unittest tests.test_website2 -v
+          python tests/site_smoke.py
+      - name: Run responsive browser tests and capture screenshots
+        run: python tests/browser_website2.py
+      - name: Upload responsive review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dentxpert-responsive-screenshots
+          path: browser-evidence/*.png
+          if-no-files-found: warn
+          retention-days: 14
