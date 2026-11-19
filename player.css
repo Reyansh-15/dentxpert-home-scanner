@@ -306,3 +306,17 @@ html:not(.js) .player-toolbar { display: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
+
+/* Approved research-stage homepage additions */
+.site-nav { flex-wrap: wrap; justify-content: flex-end; gap: 12px 20px; }
+.concept-grid-five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.concept-grid-five .concept-card { padding-right: 14px; }
+.concept-grid-five .concept-card + .concept-card { padding-left: 14px; }
+.research-panel { margin: 0 0 30px; padding: 30px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.research-panel h2 { margin: 0 0 12px; font-size: clamp(24px, 3vw, 34px); }
+.research-panel p { max-width: 850px; color: var(--muted); }
+.research-panel details { padding: 14px 0; border-top: 1px solid var(--line); }
+.research-panel summary { cursor: pointer; font-weight: 700; }
+.research-panel details p { margin-bottom: 0; }
+@media (max-width: 1000px) { .concept-grid-five { grid-template-columns: repeat(2, minmax(0, 1fr)); } .concept-grid-five .concept-card { padding: 18px !important; border-left: 0 !important; border-top: 1px solid var(--line); } }
+@media (max-width: 650px) { .site-header { align-items: flex-start; padding: 16px 0; flex-direction: column; } .site-nav { justify-content: flex-start; } .concept-grid-five { grid-template-columns: 1fr; } .research-panel { padding: 20px; } }

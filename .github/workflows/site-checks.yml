@@ -1,0 +1,27 @@
+name: DentXpert static site checks
+on:
+  push:
+    branches: [dev/dentxpert-approved-refresh]
+  pull_request:
+    paths:
+      - 'website2/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'player.css'
+      - 'player.js'
+      - '.github/workflows/site-checks.yml'
+  workflow_dispatch:
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check existing website
+        run: python tests/site_smoke.py
+      - name: Check eight-page private draft
+        run: python -m unittest discover -s tests -p 'test_website2.py' -v

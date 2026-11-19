@@ -1,0 +1,28 @@
+name: Website 2.0 browser checks
+on:
+  push:
+    branches:
+      - dev/dentxpert-approved-refresh
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright and Chromium
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Test eight-page draft in Chromium
+        run: python tests/browser_website2.py
+      - name: Preserve screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: website2-browser-screenshots
+          path: browser-evidence/
+          if-no-files-found: ignore
