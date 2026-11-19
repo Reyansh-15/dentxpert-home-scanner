@@ -32,27 +32,36 @@ def main():
                     page.wait_for_selector(".scanner-overlay")
                     toggle = page.locator("#theme-toggle")
                     toggle.click()
-                    assert toggle.get_attribute("aria-pressed") == "true", (width, slug, "theme toggle")
+                    if toggle.get_attribute("aria-pressed") != "true":
+                        errors.append((width, slug, "theme toggle"))
                     toggle.click()
-                    assert toggle.get_attribute("aria-pressed") == "false", (width, slug, "theme reset")
+                    if toggle.get_attribute("aria-pressed") != "false":
+                        errors.append((width, slug, "theme reset"))
                     scanner = page.locator(".hero-visual")
                     scanner.click()
-                    assert scanner.get_attribute("aria-expanded") == "true", (width, slug, "scanner overlay")
+                    if scanner.get_attribute("aria-expanded") != "true":
+                        errors.append((width, slug, "scanner overlay"))
                     scanner.press("Escape")
-                    assert scanner.get_attribute("aria-expanded") == "false", (width, slug, "scanner overlay close")
+                    if scanner.get_attribute("aria-expanded") != "false":
+                        errors.append((width, slug, "scanner overlay close"))
                     concept = page.locator(".concept").first
                     concept.click()
-                    assert concept.get_attribute("aria-pressed") == "true", (width, slug, "concept selection")
+                    if concept.get_attribute("aria-pressed") != "true":
+                        errors.append((width, slug, "concept selection"))
                 if width <= 720 and slug == "home":
                     menu = page.locator("#menu-button")
                     menu.click()
-                    assert menu.get_attribute("aria-expanded") == "true"
+                    if menu.get_attribute("aria-expanded") != "true":
+                        errors.append((width, slug, "menu open"))
                     page.keyboard.press("Escape")
-                    assert menu.get_attribute("aria-expanded") == "false"
-                    assert menu.evaluate("(el) => el === document.activeElement")
+                    if menu.get_attribute("aria-expanded") != "false":
+                        errors.append((width, slug, "menu Escape close"))
+                    if not menu.evaluate("(el) => el === document.activeElement"):
+                        errors.append((width, slug, "menu focus restore"))
                     menu.click()
                     page.locator("#primary-nav a").nth(1).click()
-                    assert page.locator("#menu-button").get_attribute("aria-expanded") == "false"
+                    if page.locator("#menu-button").get_attribute("aria-expanded") != "false":
+                        errors.append((width, slug, "menu link close"))
             page.close()
         browser.close()
     if errors:
