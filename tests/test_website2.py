@@ -64,12 +64,17 @@ class SiteChecks(unittest.TestCase):
                     self.assertIn(other + ".html", parser.links, f"missing nav: {other}")
     def test_shared_assets(self):
         css = (SITE / "site.css").read_text(encoding="utf-8")
+        interactions = (SITE / "interactions.css").read_text(encoding="utf-8")
         js = (SITE / "site.js").read_text(encoding="utf-8")
         self.assertIn("prefers-reduced-motion", css)
+        self.assertIn("prefers-reduced-motion", interactions)
         self.assertIn(":focus-visible", css)
         self.assertIn("aria-expanded", js)
         self.assertIn("Escape", js)
         self.assertIn("localStorage", js)
+        self.assertIn("IntersectionObserver", js)
+        self.assertIn("scanner-overlay", js)
+        self.assertIn("is-selected", js)
         self.assertIn("[data-theme=dark]", css)
     def test_film_caption_disclosure(self):
         home = (SITE / "home.html").read_text(encoding="utf-8")
@@ -92,10 +97,10 @@ class SiteChecks(unittest.TestCase):
     def test_mobile_menu_dismissal_handlers(self):
         js = (SITE / "site.js").read_text(encoding="utf-8")
         self.assertIn("closeMenu(true)", js)
-        self.assertIn("nav?.addEventListener('click'", js)
-        self.assertIn("document.addEventListener('click'", js)
-        self.assertIn("window.addEventListener('resize'", js)
-        self.assertIn("menu.setAttribute('aria-expanded','false')", js)
+        self.assertIn('nav?.addEventListener("click"', js)
+        self.assertIn('document.addEventListener("click"', js)
+        self.assertIn('addEventListener("resize"', js)
+        self.assertIn('menu.setAttribute("aria-expanded","false")', js)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
