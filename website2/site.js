@@ -90,5 +90,22 @@
 
   document.querySelectorAll('.concept').forEach(card => { card.tabIndex=0; card.setAttribute('role','button'); card.setAttribute('aria-pressed','false'); const activate=()=>{const on=card.getAttribute('aria-pressed')!=='true'; document.querySelectorAll('.concept').forEach(c=>c.setAttribute('aria-pressed','false')); card.setAttribute('aria-pressed',String(on));}; card.addEventListener('click',activate); card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}}); });
 
+  // Interactive concept laboratory: drag the render, inspect depth, and reset safely.
+  if (scanner && !reduced.matches) {
+    const controls = document.createElement('div');
+    controls.className = 'scanner-controls';
+    controls.innerHTML = '<span>LAB CONTROLS</span><button type="button" data-scanner-action="reset">Reset view</button><button type="button" data-scanner-action="explode">Explode layers</button>';
+    scanner.append(controls);
+    let dragging = false, startX = 0, startY = 0, rx = 0, ry = 0;
+    const setRotation = () => scanner.style.setProperty('--lab-rotation', `rotateX(${rx}deg) rotateY(${ry}deg)`);
+    scanner.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; dragging = true; startX=e.clientX; startY=e.clientY; scanner.setPointerCapture?.(e.pointerId); scanner.classList.add('is-dragging'); });
+    scanner.addEventListener('pointermove', e => { if(!dragging) return; ry=Math.max(-22,Math.min(22,ry+(e.clientX-startX)*.18)); rx=Math.max(-14,Math.min(14,rx-(e.clientY-startY)*.12)); startX=e.clientX; startY=e.clientY; setRotation(); });
+    const stop = () => { dragging=false; scanner.classList.remove('is-dragging'); };
+    scanner.addEventListener('pointerup',stop); scanner.addEventListener('pointercancel',stop); scanner.addEventListener('pointerleave',stop);
+    controls.querySelector('[data-scanner-action="reset"]').onclick=()=>{rx=0;ry=0;scanner.classList.remove('is-exploded');setRotation();announce('Concept view reset')};
+    controls.querySelector('[data-scanner-action="explode"]').onclick=()=>{scanner.classList.toggle('is-exploded');announce(scanner.classList.contains('is-exploded')?'Layer view opened':'Layer view closed')};
+  }
+
   document.querySelectorAll("a[href$='.html']").forEach(link => link.addEventListener('click', e => { if(e.metaKey||e.ctrlKey||e.shiftKey||reduced.matches)return; const target=new URL(link.href,location.href); if(target.origin!==location.origin)return; e.preventDefault(); body.classList.add('page-leaving'); setTimeout(()=>location.href=target.href,210); }));
 })();
+
