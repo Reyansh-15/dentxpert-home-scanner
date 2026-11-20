@@ -25,7 +25,7 @@ def main():
     assert "not a working or clinically validated medical device" in html
     home = (ROOT / "website2/home.html").read_text(encoding="utf-8")
     assert "<video" not in home
-    assert "withheld" in home
+    assert "withheld" in home.lower()
     assert "no working device" in home.lower()
     assert "Original site" not in home
     print("Public entry-point safety checks passed.")

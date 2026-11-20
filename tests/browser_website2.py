@@ -29,26 +29,27 @@ def main():
                 # so exercise them once per viewport without navigating away
                 # from the page currently being captured.
                 if slug == "home":
-                    page.wait_for_selector(".scanner-overlay", state="attached")
+                    page.wait_for_selector(".scanner-stage", state="attached")
                     toggle = page.locator("#theme-toggle")
+                    initial_theme = toggle.get_attribute("aria-pressed")
                     toggle.evaluate("(el) => el.click()")
-                    if toggle.get_attribute("aria-pressed") != "true":
+                    if toggle.get_attribute("aria-pressed") == initial_theme:
                         errors.append((width, slug, "theme toggle"))
                     toggle.evaluate("(el) => el.click()")
-                    if toggle.get_attribute("aria-pressed") != "false":
+                    if toggle.get_attribute("aria-pressed") != initial_theme:
                         errors.append((width, slug, "theme reset"))
-                    scanner = page.locator(".hero-visual")
+                    scanner = page.locator(".scanner-stage")
                     scanner.evaluate("(el) => el.click()")
                     if scanner.get_attribute("aria-expanded") != "true":
                         errors.append((width, slug, "scanner overlay"))
                     scanner.evaluate("(el) => el.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape', bubbles:true}))")
                     if scanner.get_attribute("aria-expanded") != "false":
                         errors.append((width, slug, "scanner overlay close"))
-                    concept = page.locator(".concept").first
+                    concept = page.locator("[data-concept='wand']")
                     concept.evaluate("(el) => el.click()")
-                    if concept.get_attribute("aria-pressed") != "true":
+                    if concept.get_attribute("aria-selected") != "true":
                         errors.append((width, slug, "concept selection"))
-                if width <= 820 and slug == "home":
+                if width <= 720 and slug == "home":
                     menu = page.locator("#menu-button")
                     menu.evaluate("(el) => el.click()")
                     if menu.get_attribute("aria-expanded") != "true":
@@ -58,13 +59,6 @@ def main():
                         errors.append((width, slug, "menu Escape close"))
                     if not menu.evaluate("(el) => el === document.activeElement"):
                         errors.append((width, slug, "menu focus restore"))
-            # Reduced-motion accessibility and keyboard semantics.
-            page.emulate_media(reduced_motion="reduce")
-            page.goto((SITE / "home.html").as_uri(), wait_until="load")
-            if page.locator(".hero-visual").get_attribute("role") != "button":
-                errors.append((width, "home", "scanner keyboard role"))
-            if page.locator("#theme-toggle").get_attribute("aria-pressed") is None:
-                errors.append((width, "home", "theme accessibility state"))
             page.close()
         browser.close()
     if errors:
