@@ -48,7 +48,7 @@ def main():
                     concept.evaluate("(el) => el.click()")
                     if concept.get_attribute("aria-pressed") != "true":
                         errors.append((width, slug, "concept selection"))
-                if width <= 720 and slug == "home":
+                if width <= 820 and slug == "home":
                     menu = page.locator("#menu-button")
                     menu.evaluate("(el) => el.click()")
                     if menu.get_attribute("aria-expanded") != "true":
@@ -58,6 +58,13 @@ def main():
                         errors.append((width, slug, "menu Escape close"))
                     if not menu.evaluate("(el) => el === document.activeElement"):
                         errors.append((width, slug, "menu focus restore"))
+            # Reduced-motion accessibility and keyboard semantics.
+            page.emulate_media(reduced_motion="reduce")
+            page.goto((SITE / "home.html").as_uri(), wait_until="load")
+            if page.locator(".hero-visual").get_attribute("role") != "button":
+                errors.append((width, "home", "scanner keyboard role"))
+            if page.locator("#theme-toggle").get_attribute("aria-pressed") is None:
+                errors.append((width, "home", "theme accessibility state"))
             page.close()
         browser.close()
     if errors:
