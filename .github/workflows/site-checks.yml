@@ -1,7 +1,7 @@
 name: DentXpert static site checks
 on:
   push:
-    branches: [dev/dentxpert-approved-refresh]
+    branches: [dev/dentxpert-approved-refresh, main]
   pull_request:
     paths:
       - 'website2/**'
