@@ -18,9 +18,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Assemble allowlisted public site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/website2
+          cp index.html public/
+          cp scanner-hero-display.webp public/
+          for page in home explore learn discover technology pricing faq about; do
+            cp "website2/${page}.html" public/website2/
+          done
+          cp website2/site.css website2/site.js website2/interactions.css public/website2/
+          test "$(find public/website2 -maxdepth 1 -name '*.html' | wc -l)" -eq 8
+          ! find public -type f | grep -Ei '\.(mp4|mov|webm|vtt|pdf|md)$'
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: public
       - id: deployment
         uses: actions/deploy-pages@v4
