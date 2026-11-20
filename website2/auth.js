@@ -1,0 +1,33 @@
+(() => {
+  'use strict';
+  const config = window.DX_INSFORGE_CONFIG || {};
+  let client = null;
+  let currentUser = null;
+  const loadClient = async () => {
+    if (!config.baseUrl || !config.anonKey) return null;
+    if (!client) {
+      const sdk = await import('https://esm.sh/@insforge/sdk@latest');
+      client = sdk.createClient({ baseUrl: config.baseUrl, anonKey: config.anonKey });
+    }
+    return client;
+  };
+  const style = document.createElement('style');
+  style.textContent = `
+    .account-button{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:999px;padding:.55rem .85rem;background:rgba(117,234,215,.06);color:var(--ink);font:600 .75rem Manrope,sans-serif;cursor:pointer;transition:transform .25s,border-color .25s,background .25s}.account-button:hover{transform:translateY(-2px);border-color:var(--aqua);background:rgba(117,234,215,.12)}
+    .auth-backdrop{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:1rem;background:rgba(1,11,13,.72);backdrop-filter:blur(18px);opacity:0;pointer-events:none;transition:opacity .35s}.auth-backdrop.open{opacity:1;pointer-events:auto}.auth-card{width:min(100%,30rem);padding:2rem;border:1px solid var(--line2);border-radius:2rem;background:linear-gradient(145deg,var(--surface2),var(--surface));box-shadow:0 30px 100px rgba(0,0,0,.45);transform:translateY(22px) scale(.98);transition:transform .45s cubic-bezier(.2,.8,.2,1)}.auth-backdrop.open .auth-card{transform:none}.auth-card header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}.auth-card h2{font-size:2.1rem;margin:.4rem 0}.auth-card p{color:var(--muted)}.auth-close{border:0;background:transparent;color:var(--ink);font-size:1.5rem;cursor:pointer}.auth-form{display:grid;gap:.8rem}.auth-form label{font-size:.75rem;color:var(--muted)}.auth-form input{width:100%;margin-top:.35rem;padding:.8rem 1rem;border:1px solid var(--line2);border-radius:.9rem;background:rgba(0,0,0,.12);color:var(--ink)}.auth-status{min-height:1.5rem;font-size:.8rem;color:var(--aqua)}.auth-switch{border:0;background:none;color:var(--aqua);cursor:pointer;padding:0;font:inherit}.account-menu{position:fixed;top:5rem;right:1rem;z-index:180;width:min(18rem,calc(100% - 2rem));padding:1rem;border:1px solid var(--line2);border-radius:1rem;background:var(--surface2);box-shadow:var(--shadow);opacity:0;transform:translateY(-8px);pointer-events:none;transition:.25s}.account-menu.open{opacity:1;transform:none;pointer-events:auto}.account-menu button{width:100%;padding:.7rem;border:1px solid var(--line);border-radius:.7rem;background:transparent;color:var(--ink);cursor:pointer;text-align:left}.account-menu small{display:block;color:var(--muted);margin-bottom:.75rem;overflow:hidden;text-overflow:ellipsis}
+  `;
+  document.head.append(style);
+  const header = document.querySelector('.nav-shell');
+  if (!header) return;
+  const account = document.createElement('button'); account.className='account-button'; account.type='button'; account.textContent='Sign in'; account.setAttribute('aria-haspopup','dialog'); header.prepend(account);
+  const backdrop = document.createElement('div'); backdrop.className='auth-backdrop'; backdrop.innerHTML=`<section class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title"><header><div><span class="kicker">PRIVATE RESEARCH SPACE</span><h2 id="auth-title">Keep your inquiry close.</h2><p>Sign in to save concept notes. DentXpert does not request medical information.</p></div><button class="auth-close" type="button" aria-label="Close">×</button></header><form class="auth-form"><label>Email<input name="email" type="email" autocomplete="email" required></label><label>Password<input name="password" type="password" autocomplete="current-password" minlength="8" required></label><button class="button primary" type="submit">Continue</button><div class="auth-status" aria-live="polite"></div><button class="auth-switch" type="button">New here? Create an account</button></form></section>`; document.body.append(backdrop);
+  const menu = document.createElement('div'); menu.className='account-menu'; menu.innerHTML='<small></small><button type="button">Sign out</button>'; document.body.append(menu);
+  const form=backdrop.querySelector('form'), status=backdrop.querySelector('.auth-status'), title=backdrop.querySelector('#auth-title'), switcher=backdrop.querySelector('.auth-switch'); let mode='signin';
+  const open=()=>backdrop.classList.add('open'); const close=()=>backdrop.classList.remove('open');
+  account.onclick=()=> currentUser ? menu.classList.toggle('open') : open(); backdrop.querySelector('.auth-close').onclick=close; backdrop.onclick=e=>{if(e.target===backdrop)close()}; document.addEventListener('keydown',e=>{if(e.key==='Escape'){close();menu.classList.remove('open')}});
+  switcher.onclick=()=>{mode=mode==='signin'?'signup':'signin'; title.textContent=mode==='signin'?'Keep your inquiry close.':'Create a research account.'; form.querySelector('button[type=submit]').textContent=mode==='signin'?'Continue':'Create account'; switcher.textContent=mode==='signin'?'New here? Create an account':'Already have an account? Sign in'; status.textContent=''};
+  form.onsubmit=async e=>{e.preventDefault(); status.textContent='Connecting…'; const fd=new FormData(form); try{const sdk=await loadClient(); if(!sdk) throw new Error('Add your InsForge URL and anon key in insforge-config.js first.'); const result=mode==='signin'?await sdk.auth.signInWithPassword({email:fd.get('email'),password:fd.get('password')}):await sdk.auth.signUp({email:fd.get('email'),password:fd.get('password'),redirectTo:location.href}); if(result.error) throw result.error; currentUser=result.data?.user||null; account.textContent=currentUser?.email?.split('@')[0]||'Account'; status.textContent=mode==='signup'?'Check your email to verify your account.':'Signed in.'; setTimeout(close,900);}catch(err){status.textContent=err.message||'Unable to complete authentication.';}};
+  menu.querySelector('button').onclick=async()=>{try{const sdk=await loadClient(); await sdk?.auth.signOut()}finally{currentUser=null;account.textContent='Sign in';menu.classList.remove('open')}};
+  (async()=>{try{const sdk=await loadClient(); const result=await sdk?.auth.getCurrentUser(); currentUser=result?.data?.user||null; if(currentUser)account.textContent=currentUser.email.split('@')[0]}catch{}})();
+})();
+
