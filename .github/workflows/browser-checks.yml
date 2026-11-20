@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev/dentxpert-approved-refresh
+      - main
   workflow_dispatch:
 jobs:
   browser:
