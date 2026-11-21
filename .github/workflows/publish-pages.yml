@@ -25,11 +25,11 @@ jobs:
           mkdir -p public/website2
           cp index.html public/
           cp scanner-hero-display.webp public/
-          for page in home explore learn discover technology pricing faq about; do
+          for page in home explore learn discover command-center technology pricing faq about; do
             cp "website2/${page}.html" public/website2/
           done
-          cp website2/site.css website2/site.js website2/interactions.css public/website2/
-          test "$(find public/website2 -maxdepth 1 -name '*.html' | wc -l)" -eq 8
+          cp website2/site.css website2/site.js website2/interactions.css website2/auth.js website2/insforge-config.js website2/knowledge-api.js website2/module-registry.js website2/command-center.js public/website2/
+          test "$(find public/website2 -maxdepth 1 -name '*.html' | wc -l)" -eq 9
           ! find public -type f | grep -Ei '\.(mp4|mov|webm|vtt|pdf|md)$'
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
@@ -42,7 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           base="https://reyansh-15.github.io/dentxpert-home-scanner"
-          for path in / /website2/home.html /website2/explore.html /website2/learn.html /website2/discover.html /website2/technology.html /website2/pricing.html /website2/faq.html /website2/about.html /website2/site.css /website2/site.js /website2/interactions.css /scanner-hero-display.webp; do
+          for path in / /website2/home.html /website2/explore.html /website2/learn.html /website2/discover.html /website2/command-center.html /website2/technology.html /website2/pricing.html /website2/faq.html /website2/about.html /website2/site.css /website2/site.js /website2/interactions.css /scanner-hero-display.webp; do
             echo "Checking ${base}${path}"
             curl --fail --location --retry 6 --retry-delay 5 --retry-all-errors --silent --show-error --output /dev/null "${base}${path}"
           done
