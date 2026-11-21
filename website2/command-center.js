@@ -67,9 +67,10 @@
     ...modules.map((item,index)=>({name:'Inspect '+item.name,run:()=>{if(search)search.value='';if(filter)filter.value='all';render();select(index);list?.querySelector('[data-module="'+index+'"]')?.focus()}}))
   ];
   const results = document.createElement('div');
-  results.id = 'command-results'; results.setAttribute('role','listbox');
+  results.id = 'command-results'; results.setAttribute('role','group');
   results.setAttribute('aria-label','Available commands');
   input?.setAttribute('aria-controls','command-results');
+  input?.setAttribute('aria-describedby','command-results');
   input?.setAttribute('aria-label','Search commands');
   input?.parentElement?.append(results);
   const drawCommands = () => {
@@ -106,7 +107,7 @@
   palette?.addEventListener('click',event=>{if(event.target===palette)close()});
   palette?.addEventListener('keydown',event=>{
     if(event.key==='Tab'){
-      const focusables=[...palette.querySelectorAll('input,button')].filter(el=>!el.disabled);
+      const focusables=[...palette.querySelectorAll('input,button')].filter(el=>!el.disabled && !el.hidden && el.getClientRects().length);
       const first=focusables[0],last=focusables[focusables.length-1];
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}
