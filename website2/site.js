@@ -4,12 +4,6 @@
   const body = document.body;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   root.classList.add('js');
-  if (location.pathname.includes('command-center')) {
-    const enhancement = document.createElement('script');
-    enhancement.src = 'command-center-enhancements.js';
-    enhancement.defer = true;
-    document.head.append(enhancement);
-  }
 
   const live = document.createElement('div');
   live.className = 'sr-only'; live.id = 'dx-live'; live.setAttribute('aria-live', 'polite'); body.append(live);
@@ -21,7 +15,7 @@
     const signal = document.createElement('div');
     signal.className = 'hero-signal';
     signal.setAttribute('aria-label', 'DentXpert research status');
-    signal.innerHTML = '<div><strong>01</strong><span>research concept</span></div><div><strong>08</strong><span>story chapters</span></div><div><strong>∞</strong><span>questions open</span></div>';
+    signal.innerHTML = '<div><strong>01</strong><span>research concept</span></div><div><strong>09</strong><span>site chapters</span></div><div><strong>∞</strong><span>questions open</span></div>';
     heroActions.after(signal);
   }
 
@@ -90,7 +84,7 @@
   document.querySelectorAll('[data-concept]').forEach((tab,index,tabs) => tab.addEventListener('click', () => {
     const data = concepts[tab.dataset.concept]; if(!data) return;
     tabs.forEach(t => t.setAttribute('aria-selected',String(t===tab)));
-    const panel = document.getElementById('concept-panel'); panel?.animate?.([{opacity:.25,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:360,easing:'ease-out'});
+    const panel = document.getElementById('concept-panel'); if(!reduced.matches) panel?.animate?.([{opacity:.25,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:360,easing:'ease-out'});
     Object.entries(conceptEls).forEach(([key,el]) => { if(el) el.textContent = data[key]; });
     announce(`${data.name} concept selected`);
   }));
@@ -102,7 +96,7 @@
     discuss:{kicker:'DISCUSSION',title:'End with better questions for real care.',copy:'Help a person prepare a clear conversation while keeping qualified judgment central.',note:'Professional dental care remains essential.'}
   };
   const screenEls={kicker:document.getElementById('screen-kicker'),title:document.getElementById('screen-title'),copy:document.getElementById('screen-copy'),note:document.getElementById('screen-note')};
-  document.querySelectorAll('.exp-nav').forEach(button => button.addEventListener('click', () => { const data=screens[button.dataset.screen]; if(!data)return; document.querySelectorAll('.exp-nav').forEach(b=>b.classList.toggle('active',b===button)); Object.entries(screenEls).forEach(([k,el])=>{if(el)el.textContent=data[k]}); document.getElementById('prototype-screen')?.animate?.([{opacity:.3,transform:'translateX(10px)'},{opacity:1,transform:'none'}],{duration:330,easing:'ease-out'}); announce(`${data.kicker.toLowerCase()} screen selected`); }));
+  document.querySelectorAll('.exp-nav').forEach(button => button.addEventListener('click', () => { const data=screens[button.dataset.screen]; if(!data)return; document.querySelectorAll('.exp-nav').forEach(b=>b.classList.toggle('active',b===button)); Object.entries(screenEls).forEach(([k,el])=>{if(el)el.textContent=data[k]}); if(!reduced.matches) document.getElementById('prototype-screen')?.animate?.([{opacity:.3,transform:'translateX(10px)'},{opacity:1,transform:'none'}],{duration:330,easing:'ease-out'}); announce(`${data.kicker.toLowerCase()} screen selected`); }));
 
   document.querySelectorAll('.concept').forEach(card => { card.tabIndex=0; card.setAttribute('role','button'); card.setAttribute('aria-pressed','false'); const activate=()=>{const on=card.getAttribute('aria-pressed')!=='true'; document.querySelectorAll('.concept').forEach(c=>c.setAttribute('aria-pressed','false')); card.setAttribute('aria-pressed',String(on));}; card.addEventListener('click',activate); card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}}); });
 
