@@ -47,9 +47,12 @@ jobs:
             curl --fail --location --retry 6 --retry-delay 5 --retry-all-errors --silent --show-error --output /dev/null "${base}${path}"
           done
           for path in /TASKS_141_155.md /RELEASE_ROLLBACK.md /website2/secret.mp4; do
-            status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${base}${path}")"
-            if [ "$status" != "404" ]; then
-              echo "Unexpected public file: ${path} (HTTP ${status})"
+            status="$(curl --location --silent --show-error --retry 6 --retry-delay 5 --retry-all-errors --output /dev/null --write-out '%{http_code}' "${base}${path}")"
+            if [ "$status" = "200" ]; then
+              echo "Restricted file is publicly accessible: ${path}"
+              exit 1
+            elif [ "$status" != "404" ]; then
+              echo "Restricted-file verification inconclusive: ${path} (HTTP ${status})"
               exit 1
             fi
           done
