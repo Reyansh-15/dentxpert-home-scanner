@@ -24,3 +24,7 @@ Attempted to download a complete source ZIP from GitHub to the independent worki
 - Obtain a complete repo archive in a separate storage provider, hash it and verify extraction; rehearse rollback without affecting production.
 
 **Audit decision:** source inspection completed with a targeted test improvement. Full manual accessibility, production and backup gates **not passed**.
+
+## Verified follow-up CI
+
+The tablet-menu regression test introduced in commit `a17fb1f9a7af1ac014f6ce25c72925beffd3d44d` passed in browser-checks run `44878192661`. At subsequent commit `3de73b6d408313f28256b76df2695821b9d512f6`, the four workflows all concluded **success**: browser `44878209054`, static `44878209109`, custom publish `44878209092`, and Pages build/deployment `44878209062`. This verifies automated regression checks on that exact SHA, **not** a screen-reader or independent public-site audit.
