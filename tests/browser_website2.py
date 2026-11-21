@@ -49,7 +49,7 @@ def main():
                     concept.evaluate("(el) => el.click()")
                     if concept.get_attribute("aria-selected") != "true":
                         errors.append((width, slug, "concept selection"))
-                if width <= 720 and slug == "home":
+                if width <= 820 and slug == "home":
                     menu = page.locator("#menu-button")
                     menu.evaluate("(el) => el.click()")
                     if menu.get_attribute("aria-expanded") != "true":
