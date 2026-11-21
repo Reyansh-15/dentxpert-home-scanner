@@ -4,6 +4,12 @@
   const body = document.body;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   root.classList.add('js');
+  if (location.pathname.includes('command-center')) {
+    const enhancement = document.createElement('script');
+    enhancement.src = 'command-center-enhancements.js';
+    enhancement.defer = true;
+    document.head.append(enhancement);
+  }
 
   const live = document.createElement('div');
   live.className = 'sr-only'; live.id = 'dx-live'; live.setAttribute('aria-live', 'polite'); body.append(live);
