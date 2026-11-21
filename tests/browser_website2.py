@@ -83,6 +83,19 @@ def main():
                     page.locator("#module-list [data-module]").click()
                     if "Compact Wand" not in page.locator("#cc-narrative").inner_text():
                         errors.append((width, slug, "module selection"))
+                    page.locator("#workspace-title").fill("Verify prototype interaction")
+                    page.locator("#workspace-form button[type=submit]").click()
+                    if "Verify prototype interaction" not in page.locator("#workspace-items").inner_text():
+                        errors.append((width, slug, "workspace create"))
+                    page.locator("#workspace-items button", has_text="Complete").click()
+                    if "completed" not in page.locator("#workspace-items").inner_text():
+                        errors.append((width, slug, "workspace complete"))
+                    page.reload()
+                    if "Verify prototype interaction" not in page.locator("#workspace-items").inner_text():
+                        errors.append((width, slug, "workspace persistence"))
+                    page.locator("#workspace-clear").click()
+                    if "Verify prototype interaction" in page.locator("#workspace-items").inner_text():
+                        errors.append((width, slug, "workspace clear"))
                     page.locator("#open-command").click()
                     page.keyboard.press("Escape")
                     if page.locator("#command").is_visible():
