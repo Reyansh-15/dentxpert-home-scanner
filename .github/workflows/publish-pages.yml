@@ -37,3 +37,19 @@ jobs:
           path: public
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public routes and assets after deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://reyansh-15.github.io/dentxpert-home-scanner"
+          for path in / /website2/home.html /website2/explore.html /website2/learn.html /website2/discover.html /website2/technology.html /website2/pricing.html /website2/faq.html /website2/about.html /website2/site.css /website2/site.js /website2/interactions.css /scanner-hero-display.webp; do
+            echo "Checking ${base}${path}"
+            curl --fail --location --retry 6 --retry-delay 5 --retry-all-errors --silent --show-error --output /dev/null "${base}${path}"
+          done
+          for path in /TASKS_141_155.md /RELEASE_ROLLBACK.md /website2/secret.mp4; do
+            status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${base}${path}")"
+            if [ "$status" != "404" ]; then
+              echo "Unexpected public file: ${path} (HTTP ${status})"
+              exit 1
+            fi
+          done
