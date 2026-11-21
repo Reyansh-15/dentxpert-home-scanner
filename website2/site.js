@@ -9,6 +9,16 @@
   live.className = 'sr-only'; live.id = 'dx-live'; live.setAttribute('aria-live', 'polite'); body.append(live);
   const announce = message => { live.textContent = ''; requestAnimationFrame(() => live.textContent = message); };
 
+  // Add a compact, honest status signal to the hero without duplicating markup across pages.
+  const heroActions = document.querySelector('.hero-copy .actions');
+  if (heroActions && !document.querySelector('.hero-signal')) {
+    const signal = document.createElement('div');
+    signal.className = 'hero-signal';
+    signal.setAttribute('aria-label', 'DentXpert research status');
+    signal.innerHTML = '<div><strong>01</strong><span>research concept</span></div><div><strong>08</strong><span>story chapters</span></div><div><strong>∞</strong><span>questions open</span></div>';
+    heroActions.after(signal);
+  }
+
   const header = document.querySelector('.site-header');
   const progress = document.createElement('div');
   progress.setAttribute('aria-hidden', 'true');
@@ -108,4 +118,3 @@
 
   document.querySelectorAll("a[href$='.html']").forEach(link => link.addEventListener('click', e => { if(e.metaKey||e.ctrlKey||e.shiftKey||reduced.matches)return; const target=new URL(link.href,location.href); if(target.origin!==location.origin)return; e.preventDefault(); body.classList.add('page-leaving'); setTimeout(()=>location.href=target.href,210); }));
 })();
-
