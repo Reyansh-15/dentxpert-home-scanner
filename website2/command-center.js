@@ -137,6 +137,62 @@
       try{recognition.start()}catch{announce('Voice recognition could not start')}
     });
   }else if(voice){voice.disabled=true;voice.title='Voice input is not supported in this browser'}
+
+  // Functional local-first workspace. No medical data or cloud sync.
+  const workspaceForm=$('#workspace-form'),workspaceItems=$('#workspace-items');
+  const workspaceStatus=$('#workspace-status');
+  const storageKey='dx-research-workspace-v1';
+  let workspace=[];
+  try {
+    const saved=JSON.parse(localStorage.getItem(storageKey)||'[]');
+    if(Array.isArray(saved)) workspace=saved.filter(x=>x&&typeof x.title==='string'&&['task','note'].includes(x.kind)).slice(0,200);
+  }catch{if(workspaceStatus)workspaceStatus.textContent='Saved items could not be read. Start a new local workspace.'}
+  const persistWorkspace=()=>{
+    try{localStorage.setItem(storageKey,JSON.stringify(workspace));return true}
+    catch{if(workspaceStatus)workspaceStatus.textContent='Storage unavailable. Changes will last only until this page closes.';return false}
+  };
+  const renderWorkspace=()=>{
+    if(!workspaceItems)return;
+    workspaceItems.replaceChildren();
+    if(!workspace.length){const p=document.createElement('p');p.textContent='No items yet. Add your first task or note.';workspaceItems.append(p)}
+    workspace.forEach(item=>{
+      const row=document.createElement('div');row.className='workspace-item';
+      const label=document.createElement('span');label.textContent=(item.kind==='note'?'Note: ':'Task: ')+item.title+(item.done?' (completed)':'');
+      row.append(label);
+      if(item.kind==='task'){
+        const toggle=document.createElement('button');toggle.type='button';toggle.textContent=item.done?'Reopen':'Complete';
+        toggle.setAttribute('aria-label',(item.done?'Reopen ':'Complete ')+item.title);
+        toggle.addEventListener('click',()=>{item.done=!item.done;persistWorkspace();renderWorkspace()});row.append(toggle);
+      }
+      const edit=document.createElement('button');edit.type='button';edit.textContent='Edit';
+      edit.setAttribute('aria-label','Edit '+item.title);
+      edit.addEventListener('click',()=>{const next=prompt('Edit research item',item.title);if(next===null)return;const clean=next.trim().slice(0,160);if(!clean)return;item.title=clean;persistWorkspace();renderWorkspace()});
+      const remove=document.createElement('button');remove.type='button';remove.textContent='Delete';
+      remove.setAttribute('aria-label','Delete '+item.title);
+      remove.addEventListener('click',()=>{workspace=workspace.filter(x=>x!==item);persistWorkspace();renderWorkspace()});
+      row.append(edit,remove);workspaceItems.append(row);
+    });
+    if(workspaceStatus)workspaceStatus.textContent=workspace.length+' locally saved research items';
+  };
+  workspaceForm?.addEventListener('submit',event=>{
+    event.preventDefault();
+    const title=$('#workspace-title')?.value.trim().slice(0,160);
+    if(!title)return;
+    if(workspace.length>=200){if(workspaceStatus)workspaceStatus.textContent='200-item limit reached. Export or remove items first.';return}
+    workspace.unshift({id:Date.now()+'-'+Math.random().toString(36).slice(2),title,kind:$('#workspace-kind')?.value==='note'?'note':'task',done:false});
+    persistWorkspace();workspaceForm.reset();renderWorkspace();$('#workspace-title')?.focus();
+  });
+  $('#workspace-clear')?.addEventListener('click',()=>{
+    workspace=workspace.filter(x=>!x.done);persistWorkspace();renderWorkspace();
+  });
+  $('#workspace-export')?.addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify({format:'DentXpert local workspace v1',items:workspace},null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='dentxpert-research-workspace.json';document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    if(workspaceStatus)workspaceStatus.textContent='Workspace export prepared';
+  });
+  renderWorkspace();
   const descriptions={
     core:'DentXpert: research concept, not a diagnostic device.',
     design:'Design: positioning and ergonomics require user testing.',
