@@ -85,10 +85,17 @@ def main():
                         errors.append((width, slug, "menu focus restore"))
             page.close()
         browser.close()
+        # Reduced-motion preference: verify that the site does not hide content
+        # behind reveal animations when the OS requests reduced motion.
+        reduced_page = browser.new_page(viewport={"width": 375, "height": 900}, reduced_motion="reduce")
+        reduced_page.goto((SITE / "home.html").as_uri(), wait_until="load")
+        if reduced_page.locator(".reveal:not(.visible)").count():
+            errors.append(("reduced-motion", "content hidden by reveal"))
+        reduced_page.close()
     if errors:
         (OUT / "audit-errors.txt").write_text(repr(errors), encoding="utf-8")
     assert not errors, f"Browser audit failures: {errors}"
-    print("PASS: 24 responsive page views, navigation, theme, menu, overflow, and console checks")
+    print("PASS: 27 responsive page views, dialog, palette, contrast, reduced-motion, menu, overflow and console checks")
 
 
 if __name__ == "__main__":
