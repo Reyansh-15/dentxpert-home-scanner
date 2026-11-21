@@ -70,6 +70,20 @@ def main():
                     page.locator("#open-command").click()
                     if not page.locator("#command").is_visible():
                         errors.append((width, slug, "DX-002 palette open"))
+                    page.locator("#command-input").fill("Show evidence gates")
+                    page.keyboard.press("Enter")
+                    if page.locator("#cc-filter").input_value() != "Evidence gate":
+                        errors.append((width, slug, "command execution"))
+                    if page.locator("#module-list [data-module]").count() != 2:
+                        errors.append((width, slug, "filtered module count"))
+                    page.locator("#cc-filter").select_option("all")
+                    page.locator("#cc-search").fill("Compact Wand")
+                    if page.locator("#module-list [data-module]").count() != 1:
+                        errors.append((width, slug, "module search"))
+                    page.locator("#module-list [data-module]").click()
+                    if "Compact Wand" not in page.locator("#cc-narrative").inner_text():
+                        errors.append((width, slug, "module selection"))
+                    page.locator("#open-command").click()
                     page.keyboard.press("Escape")
                     if page.locator("#command").is_visible():
                         errors.append((width, slug, "DX-002 palette close"))
