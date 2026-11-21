@@ -11,11 +11,13 @@ SLUGS = ("home", "explore", "learn", "discover", "technology", "pricing", "faq",
 def main():
     OUT.mkdir(exist_ok=True)
     errors = []
+    missing = []
     with sync_playwright() as p:
         browser = p.chromium.launch()
         for width in (375, 768, 1440):
             page = browser.new_page(viewport={"width": width, "height": 900}, device_scale_factor=1)
             page.on("pageerror", lambda error: errors.append(str(error)))
+            page.on("response", lambda response: missing.append((response.url, response.status)) if response.status >= 400 and response.url.startswith("file:") else None)
             for slug in SLUGS:
                 page.goto((SITE / (slug + ".html")).as_uri(), wait_until="load")
                 if page.locator("h1").count() != 1:
