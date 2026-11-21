@@ -62,7 +62,7 @@ def main():
                         if not dialog.is_hidden():
                             errors.append((width, slug, "DX-001 dialog close"))
                     page.locator("#theme-toggle").click()
-                    ratio = page.locator(".lead").evaluate("""el => { const c = getComputedStyle(el); const fg = c.color.match(/\\d+/g).slice(0,3).map(Number); const bg = getComputedStyle(document.documentElement).backgroundColor; const base = bg.match(/\\d+/g)?.slice(0,3).map(Number) || [237,245,242]; const luminance = rgb => rgb.map(v => {v /= 255; return v <= .04045 ? v/12.92 : ((v+.055)/1.055)**2.4}).reduce((sum,v,i) => sum + v*[.2126,.7152,.0722][i],0); const a=luminance(fg), b=luminance(base); return (Math.max(a,b)+.05)/(Math.min(a,b)+.05); }""")
+                    ratio = page.locator(".lead").evaluate("""el => { const c = getComputedStyle(el); const fg = c.color.match(/\\d+/g).slice(0,3).map(Number); const bg = getComputedStyle(document.body).backgroundColor; const base = bg.match(/\\d+/g)?.slice(0,3).map(Number) || [237,245,242]; const luminance = rgb => rgb.map(v => {v /= 255; return v <= .04045 ? v/12.92 : ((v+.055)/1.055)**2.4}).reduce((sum,v,i) => sum + v*[.2126,.7152,.0722][i],0); const a=luminance(fg), b=luminance(base); return (Math.max(a,b)+.05)/(Math.min(a,b)+.05); }""")
                     if ratio < 4.5:
                         errors.append((width, slug, "DX-003 lead contrast", ratio))
                     page.locator("#theme-toggle").click()
