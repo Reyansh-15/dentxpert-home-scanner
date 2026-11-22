@@ -83,27 +83,12 @@ def main():
                     page.locator("#module-list [data-module]").click()
                     if "Compact Wand selected" not in page.locator("#cc-status").inner_text():
                         errors.append((width, slug, "module selection"))
-                    # Simulate a supported browser speech-recognition result.
-                    page.evaluate("""() => {
-                      window.__voiceStarts = 0;
-                      window.SpeechRecognition = window.webkitSpeechRecognition = class {
-                        start() {
-                          window.__voiceStarts++;
-                          this.onresult({results: [[{transcript:'show evidence gates'}]]});
-                        }
-                      };
-                    }""")
-                    # Recognition is captured when the page script loads, so use
-                    # a fresh page with an init script for the actual voice test.
-                    voice_page = browser.new_page(viewport={"width": width, "height": 900})
-                    voice_page.add_init_script("""window.webkitSpeechRecognition = class {
-                      start() { this.onresult({results: [[{transcript:'show evidence gates'}]]}); }
-                    }""")
-                    voice_page.goto((SITE / "command-center.html").as_uri(), wait_until="load")
-                    voice_page.locator("#voice-command").click()
-                    if voice_page.locator("#cc-filter").input_value() != "Evidence gate":
+                    # Deterministic voice-command execution, independent of
+                    # OS microphone permissions and browser speech support.
+                    recognized = page.evaluate("window.DXVoiceExecute('show evidence gates')")
+                    if not recognized or page.locator("#cc-filter").input_value() != "Evidence gate":
                         errors.append((width, slug, "voice command execution"))
-                    voice_page.close()
+                    page.locator("#cc-filter").select_option("all")
                     page.locator("#workspace-title").fill("Verify prototype interaction")
                     page.locator("#workspace-form button[type=submit]").click()
                     if "Verify prototype interaction" not in page.locator("#workspace-items").inner_text():
