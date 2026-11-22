@@ -50,3 +50,10 @@ Automated GitHub Actions browser checks use local file URLs, not the live produc
 - The separate default Pages deployment and custom allowlisted Pages deployment are **both still configured**. Both passing does not prove the live artifact cannot be overwritten by the other workflow. Repository Pages source settings must be reconciled; do not claim this risk resolved.
 - No independent live interactive browser, real screen-reader, 200–400% zoom or off-platform restoration evidence was obtained in this verification refresh. Those gates remain open.
 - **Release decision remains HOLD**, pending independent production audit, deployment authority reconciliation, backup restore, and qualified scientific/safety review.
+
+## Standing product direction (November 22, 2026)
+- Rebuild Second Brain OS as a genuinely functional workspace, not copies of decorative graph/card dashboards; preserve editable tasks, meaningful voice commands, state persistence and useful project workflows.
+- Build original DentXpert content factory for Codex-assisted campaign drafts, storyboards, copy and platform-specific assets with approval before publication; advertising placement on third-party platforms is not assumed free or authorized.
+- DentXpert public website requires verified interactions, accessible overlays and reduced-motion behavior, authentication and database-backed features with tested security, responsive performance and transparent research-stage claims.
+- Use the user's forthcoming Jack Roberts YouTube reference for design/workflow analysis, without copying protected media or asserting it was viewed before the link is provided.
+- Never label untested gates green; run automated and production verification, report blockers honestly. No purchases or paid commitments without separate approval.
