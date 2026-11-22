@@ -11,7 +11,8 @@ await mkdir('evidence', { recursive: true });
 const browser = await chromium.launch({ headless: true });
 try {
   for (const width of widths) {
-    const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
+    const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
     try {
       for (const slug of slugs) {
         const url = pathToFileURL(resolve('../website2', slug + '.html')).href;
@@ -22,7 +23,7 @@ try {
           report.violations.push({ slug, width, id: violation.id, impact: violation.impact, description: violation.description, nodes: violation.nodes.map(node => ({ target: node.target, failureSummary: node.failureSummary })) });
         }
       }
-    } finally { await page.close(); }
+    } finally { await context.close(); }
   }
 } finally { await browser.close(); }
 await writeFile('evidence/axe-report.json', JSON.stringify(report, null, 2));
