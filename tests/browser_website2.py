@@ -81,7 +81,7 @@ def main():
                     if page.locator("#module-list [data-module]").count() != 1:
                         errors.append((width, slug, "module search"))
                     page.locator("#module-list [data-module]").click()
-                    if "Compact Wand" not in page.locator("#cc-narrative").inner_text():
+                    if "Compact Wand selected" not in page.locator("#cc-status").inner_text():
                         errors.append((width, slug, "module selection"))
                     # Simulate a supported browser speech-recognition result.
                     page.evaluate("""() => {
