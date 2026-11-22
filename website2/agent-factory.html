@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Factory | DentXpert</title>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="agent-factory.css">
+<script src="agent-factory.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap top"><a class="brand" href="home.html"><span class="brand-mark">D</span><span>DENT<span>XPERT</span></span></a><nav aria-label="Main navigation"><a href="home.html">Home</a><a href="command-center.html">Command Center</a><a href="agent-factory.html" aria-current="page">Agent Factory</a></nav></div></header>
+<main id="main" class="factory wrap">
+<section class="factory-hero"><p class="eyebrow"><span></span>Second Brain OS · registry layer</p><h1>DentXpert Agent Factory</h1><p>Registered agent identities, skills, permissions, budgets, and local orchestration controls. This is a transparent registry—not a claim that agents are autonomously running.</p><div class="factory-state"><strong id="runtimeState">LOCAL REGISTRY</strong><span>Execution backend: NOT CONFIGURED</span><span>Paid actions: approval required</span></div></section>
+<section class="factory-tabs" role="tablist" aria-label="Agent Factory sections">
+<button class="factory-tab active" data-tab="agents" role="tab" aria-selected="true">Agents</button><button class="factory-tab" data-tab="skills" role="tab" aria-selected="false">Skills</button><button class="factory-tab" data-tab="orchestration" role="tab" aria-selected="false">Orchestration</button><button class="factory-tab" data-tab="integrations" role="tab" aria-selected="false">Integrations</button><button class="factory-tab" data-tab="quality" role="tab" aria-selected="false">Quality & Security</button>
+</section>
+<section id="agents" class="factory-panel active" data-panel>
+<div class="factory-toolbar"><input id="agentSearch" type="search" placeholder="Search agents, roles, or departments" aria-label="Search agents"><select id="departmentFilter" aria-label="Filter agents by department"><option value="all">All departments</option></select><span id="agentCount" class="count-pill"></span></div>
+<div id="agentGrid" class="agent-grid"></div>
+</section>
+<section id="skills" class="factory-panel" data-panel hidden><div class="factory-toolbar"><input id="skillSearch" type="search" placeholder="Search registered skills" aria-label="Search skills"><span id="skillCount" class="count-pill"></span></div><div id="skillGrid" class="skill-grid"></div></section>
+<section id="orchestration" class="factory-panel" data-panel hidden>
+<div class="orchestrator-grid"><article class="factory-card"><h2>Task planner</h2><p>Creates local task records and enforces lifecycle states. It does not execute external work.</p><form id="taskForm"><label>Task command<input id="taskInput" required placeholder="e.g. audit public claims"></label><label>Assign to<select id="taskAgent"></select></label><button class="button primary" type="submit">Queue local task</button></form><p id="taskStatus" class="factory-status" role="status">No task queued this session.</p></article><article class="factory-card"><h2>Agent activity</h2><div id="taskList" class="task-list"></div></article></div>
+<div class="lifecycle"><span>CREATED</span><i>→</i><span>PLANNED</span><i>→</i><span>QUEUED</span><i>→</i><span>AWAITING_REVIEW</span><i>→</i><span>COMPLETED</span></div>
+</section>
+<section id="integrations" class="factory-panel" data-panel hidden><div class="integration-grid" id="integrationGrid"></div></section>
+<section id="quality" class="factory-panel" data-panel hidden><div class="orchestrator-grid"><article class="factory-card"><h2>Quality gates</h2><ul class="check-list"><li><b>Identity uniqueness</b><span class="pass">PASS · 15/15 IDs unique</span></li><li><b>Skill metadata</b><span class="pass">PASS · 10/10 schemas present</span></li><li><b>Autonomous execution</b><span class="warn">NOT CONFIGURED</span></li><li><b>Security scans</b><span class="warn">NOT RUN IN THIS UI</span></li><li><b>Clinical validation</b><span class="warn">NOT APPLICABLE TO AGENT REGISTRY</span></li></ul></article><article class="factory-card"><h2>Audit log</h2><div id="auditLog" class="task-list"><p>Registry loaded from bundled records.</p></div><button id="runCheck" class="button ghost" type="button">Run local integrity check</button></article></div></section>
+</main>
+</body></html>
