@@ -128,24 +128,21 @@
   });
   const voice=$('#voice-command');
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  window.DXVoiceExecute = transcript => {
+    const normalized=String(transcript||'').trim().toLowerCase().replace(/[.!?]+$/,'');
+    const aliases=[[/^(show |filter )?(evidence gates?|evidence)$/,'Show evidence gates'],[/^(show |filter )?(open questions?|questions)$/,'Show open questions'],[/^(show )?(all modules?|modules)$/,'Show all modules'],[/^(go to |open )?(home|homepage)$/,'Go to home'],[/^(open |show )?(research registry|registry)$/,'Open research registry'],[/^(toggle |switch |change )?(theme|light mode|dark mode)$/,'Toggle light/dark theme']];
+    const alias=aliases.find(([pattern])=>pattern.test(normalized));
+    const match=commands.find(c=>c.name.toLowerCase()===normalized||(alias&&c.name===alias[1]));
+    if(!match)return false;
+    match.run();announce('Voice command executed: '+match.name);return true;
+  };
   if(voice&&Recognition){
     voice.addEventListener('click',()=>{
       const recognition=new Recognition();recognition.lang='en-US';
       recognition.onstart=()=>announce('Listening for a command');
       recognition.onresult=event=>{
         const transcript=(event.results?.[0]?.[0]?.transcript||'').trim();
-        const normalized=transcript.toLowerCase().replace(/[.!?]+$/,'');
-        const aliases=[
-          [/^(show |filter )?(evidence gates?|evidence)$/,'Show evidence gates'],
-          [/^(show |filter )?(open questions?|questions)$/,'Show open questions'],
-          [/^(show )?(all modules?|modules)$/,'Show all modules'],
-          [/^(go to |open )?(home|homepage)$/,'Go to home'],
-          [/^(open |show )?(research registry|registry)$/,'Open research registry'],
-          [/^(toggle |switch |change )?(theme|light mode|dark mode)$/,'Toggle light/dark theme']
-        ];
-        const alias=aliases.find(([pattern])=>pattern.test(normalized));
-        const match=commands.find(c=>c.name.toLowerCase()===normalized || (alias&&c.name===alias[1]));
-        if(match){match.run();announce('Voice command executed: '+match.name);return}
+        if(window.DXVoiceExecute(transcript))return;
         open();if(input)input.value=transcript;drawCommands();
         announce('Voice recognized. Select a matching command to run it.');
       };
