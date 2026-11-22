@@ -108,6 +108,11 @@ def main():
                     page.locator("#workspace-form button[type=submit]").click()
                     if "Verify prototype interaction" not in page.locator("#workspace-items").inner_text():
                         errors.append((width, slug, "workspace create"))
+                    if page.locator("#task-board .board-card").count() != 1:
+                        errors.append((width, slug, "board task created"))
+                    page.locator("#task-board .board-card button", has_text="Next").click()
+                    if "Verify prototype interaction" not in page.locator("#task-board .board-column").nth(1).inner_text():
+                        errors.append((width, slug, "board task moved"))
                     page.locator("#workspace-items button", has_text="Complete").click()
                     if "completed" not in page.locator("#workspace-items").inner_text():
                         errors.append((width, slug, "workspace complete"))
