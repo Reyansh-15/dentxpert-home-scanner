@@ -86,7 +86,7 @@ def main():
                     # Simulate a supported browser speech-recognition result.
                     page.evaluate("""() => {
                       window.__voiceStarts = 0;
-                      window.webkitSpeechRecognition = class {
+                      window.SpeechRecognition = window.webkitSpeechRecognition = class {
                         start() {
                           window.__voiceStarts++;
                           this.onresult({results: [[{transcript:'show evidence gates'}]]});
