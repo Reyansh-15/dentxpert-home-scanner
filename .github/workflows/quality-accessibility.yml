@@ -1,0 +1,32 @@
+name: DentXpert Playwright and axe accessibility
+on:
+  push:
+    branches: [main, 'dev/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: qa
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright and axe-core
+        run: npm install --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Audit all nine pages at mobile and desktop widths
+        run: npm run test:a11y
+      - name: Upload accessibility evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dentxpert-axe-evidence
+          path: qa/evidence/axe-report.json
+          if-no-files-found: warn
