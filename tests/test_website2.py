@@ -62,6 +62,12 @@ class SiteChecks(unittest.TestCase):
                         self.assertRegex(target_html, r'id=["\']' + re.escape(fragment) + r'["\']')
                 for other in SLUGS:
                     self.assertIn(other + ".html", parser.links, f"missing nav: {other}")
+    def test_command_center_auth_config_order(self):
+        html = (SITE / "command-center.html").read_text(encoding="utf-8")
+        self.assertIn('src="insforge-config.js"', html)
+        self.assertLess(html.index('src="insforge-config.js"'), html.index('src="auth.js"'))
+        self.assertLess(html.index('src="insforge-config.js"'), html.index('src="knowledge-api.js"'))
+
     def test_shared_assets(self):
         css = (SITE / "site.css").read_text(encoding="utf-8")
         js = (SITE / "site.js").read_text(encoding="utf-8")
