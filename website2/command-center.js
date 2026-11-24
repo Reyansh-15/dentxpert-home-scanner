@@ -160,9 +160,10 @@
     const saved=JSON.parse(localStorage.getItem(storageKey)||'[]');
     if(Array.isArray(saved)) workspace=saved.filter(x=>x&&typeof x.title==='string'&&['task','note'].includes(x.kind)).slice(0,200);
   }catch{if(workspaceStatus)workspaceStatus.textContent='Saved items could not be read. Start a new local workspace.'}
+  let workspaceStorageFailed=false;
   const persistWorkspace=()=>{
-    try{localStorage.setItem(storageKey,JSON.stringify(workspace));return true}
-    catch{if(workspaceStatus)workspaceStatus.textContent='Storage unavailable. Changes will last only until this page closes.';return false}
+    try{localStorage.setItem(storageKey,JSON.stringify(workspace));workspaceStorageFailed=false;return true}
+    catch{workspaceStorageFailed=true;if(workspaceStatus)workspaceStatus.textContent='Storage unavailable. Changes will last only until this page closes.';return false}
   };
   const renderBoard=()=>{
     const board=$('#task-board');if(!board)return;
@@ -211,7 +212,7 @@
       remove.addEventListener('click',()=>{workspace=workspace.filter(x=>x!==item);persistWorkspace();renderWorkspace()});
       row.append(edit,remove);workspaceItems.append(row);
     });
-    if(workspaceStatus)workspaceStatus.textContent=workspace.length+' locally saved research items';renderBoard();
+    if(workspaceStatus)workspaceStatus.textContent=workspaceStorageFailed?'Storage unavailable. Changes will last only until this page closes.':workspace.length+' locally saved research items';renderBoard();
   };
   workspaceForm?.addEventListener('submit',event=>{
     event.preventDefault();
