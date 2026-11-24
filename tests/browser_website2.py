@@ -89,6 +89,14 @@ def main():
                     if not recognized or page.locator("#cc-filter").input_value() != "Evidence gate":
                         errors.append((width, slug, "voice command execution"))
                     page.locator("#cc-filter").select_option("all")
+                    storage_page = browser.new_page(viewport={"width": width, "height": 900})
+                    storage_page.add_init_script("Storage.prototype.setItem = function() { throw new Error('storage blocked'); }")
+                    storage_page.goto((SITE / "command-center.html").as_uri(), wait_until="load")
+                    storage_page.locator("#workspace-title").fill("Unsaved task")
+                    storage_page.locator("#workspace-form button[type=submit]").click()
+                    if "Storage unavailable" not in storage_page.locator("#workspace-status").inner_text():
+                        errors.append((width, slug, "storage failure warning"))
+                    storage_page.close()
                     page.locator("#workspace-title").fill("Verify prototype interaction")
                     page.locator("#workspace-form button[type=submit]").click()
                     if "Verify prototype interaction" not in page.locator("#workspace-items").inner_text():
