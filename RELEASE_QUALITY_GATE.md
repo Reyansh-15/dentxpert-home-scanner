@@ -77,3 +77,9 @@ Automated GitHub Actions browser checks use local file URLs, not the live produc
 - Existing `backup/pre-website-refresh-2026-11-15` branch exists at `6aae6c4a`, but is not a verified exact-release **off-platform** backup. No restoration or rollback rehearsal was conducted.
 - Dual Pages publishing mechanisms remain an unresolved configuration risk. Neither real screen-reader operation nor 200–400% live zoom, authenticated database policy testing, independent security penetration testing or production restore has been verified.
 - **Decision: HOLD.** Zero unresolved launch blockers has not been demonstrated. Require latest post-fix CI results, live production checks, auth/RLS verification, qualified scientific review, and tested restoration before approval.
+
+## November 24, 2026 repair evidence
+- Prior candidate 0c6afe59: all four workflows succeeded (static 45207471761, browser 45207471829, publisher 45207471701, Pages 45207472061).
+- Source defect: workspace persistence failure warning was overwritten by renderWorkspace's saved-item count, falsely implying durable storage. Commit c2e9bb0c preserves the failure state until a successful write. Commit 43350051 adds a Playwright storage-denial regression at each viewport. New CI results pending verification.
+- Production root and command-center URL inspection again unavailable; no live accessibility or security pass claimed. Homepage source explicitly states no working device, diagnosis, accuracy claim or regulatory approval; qualified scientific review remains outstanding. Backup branch backup/pre-website-refresh-2026-11-15 confirmed at 6aae6c4a; no restoration performed.
+- HOLD: independent production accessibility, authentication and database authorization, deployment authority reconciliation, qualified scientific review and demonstrated backup restoration remain open. No purchases or paid commitments.
