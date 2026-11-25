@@ -6,6 +6,7 @@ on:
       - "website2/**"
       - "tests/**"
       - ".github/workflows/website2-ci.yml"
+      - ".github/workflows/publish-pages.yml"
   push:
     branches:
       - "redesign/website-2-premium"
