@@ -156,11 +156,11 @@
   const workspaceStatus=$('#workspace-status');
   const storageKey='dx-research-workspace-v1';
   let workspace=[];
+  let workspaceStorageFailed=false;
   try {
     const saved=JSON.parse(localStorage.getItem(storageKey)||'[]');
     if(Array.isArray(saved)) workspace=saved.filter(x=>x&&typeof x.title==='string'&&['task','note'].includes(x.kind)).slice(0,200);
-  }catch{if(workspaceStatus)workspaceStatus.textContent='Saved items could not be read. Start a new local workspace.'}
-  let workspaceStorageFailed=false;
+  }catch{workspaceStorageFailed=true;if(workspaceStatus)workspaceStatus.textContent='Saved items could not be read. Start a new local workspace.'}
   const persistWorkspace=()=>{
     try{localStorage.setItem(storageKey,JSON.stringify(workspace));workspaceStorageFailed=false;return true}
     catch{workspaceStorageFailed=true;if(workspaceStatus)workspaceStatus.textContent='Storage unavailable. Changes will last only until this page closes.';return false}
