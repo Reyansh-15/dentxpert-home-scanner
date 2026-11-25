@@ -97,6 +97,12 @@ def main():
                     if "Storage unavailable" not in storage_page.locator("#workspace-status").inner_text():
                         errors.append((width, slug, "storage failure warning"))
                     storage_page.close()
+                    read_page = browser.new_page(viewport={"width": width, "height": 900})
+                    read_page.add_init_script("Storage.prototype.getItem = function(key) { if(key === 'dx-research-workspace-v1') throw new Error('read blocked'); return null; }")
+                    read_page.goto((SITE / "command-center.html").as_uri(), wait_until="load")
+                    if "Storage unavailable" not in read_page.locator("#workspace-status").inner_text():
+                        errors.append((width, slug, "initial storage read failure warning"))
+                    read_page.close()
                     page.locator("#workspace-title").fill("Verify prototype interaction")
                     page.locator("#workspace-form button[type=submit]").click()
                     if "Verify prototype interaction" not in page.locator("#workspace-items").inner_text():
