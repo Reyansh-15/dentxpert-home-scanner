@@ -10,6 +10,7 @@ on:
       - 'player.css'
       - 'player.js'
       - '.github/workflows/site-checks.yml'
+      - '.github/workflows/publish-pages.yml'
   workflow_dispatch:
 jobs:
   static-checks:
