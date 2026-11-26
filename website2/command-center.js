@@ -86,7 +86,7 @@
     if(!matching.length){const empty=document.createElement('p');empty.textContent='No matching commands';results.append(empty)}
   };
   const open = () => {
-    if(!palette)return;
+    if(!palette || !palette.hidden)return;
     returnFocus = document.activeElement;
     palette.hidden=false; palette.classList.add('open');
     trigger?.setAttribute('aria-expanded','true');
