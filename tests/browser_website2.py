@@ -122,7 +122,10 @@ def main():
                     if "Verify prototype interaction" in page.locator("#workspace-items").inner_text():
                         errors.append((width, slug, "workspace clear"))
                     page.locator("#open-command").click()
+                    page.keyboard.press("Control+k")
                     page.keyboard.press("Escape")
+                    if not page.locator("#open-command").evaluate("(el) => el === document.activeElement"):
+                        errors.append((width, slug, "palette repeated shortcut focus restore"))
                     if page.locator("#command").is_visible():
                         errors.append((width, slug, "DX-002 palette close"))
                 if width <= 820 and slug == "home":
