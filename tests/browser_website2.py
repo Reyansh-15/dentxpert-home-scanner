@@ -122,6 +122,14 @@ def main():
                     if "Verify prototype interaction" in page.locator("#workspace-items").inner_text():
                         errors.append((width, slug, "workspace clear"))
                     page.locator("#open-command").click()
+                    page.locator("#command-input").fill("Toggle light/dark theme")
+                    page.keyboard.press("Enter")
+                    if not page.locator("#open-command").evaluate("(el) => el === document.activeElement"):
+                        errors.append((width, slug, "palette theme command focus restore"))
+                    page.locator("#open-command").click()
+                    page.locator("#command-input").fill("Toggle light/dark theme")
+                    page.keyboard.press("Enter")
+                    page.locator("#open-command").click()
                     page.keyboard.press("Control+k")
                     page.keyboard.press("Escape")
                     if not page.locator("#open-command").evaluate("(el) => el === document.activeElement"):
