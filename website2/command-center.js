@@ -80,7 +80,7 @@
     matching.forEach(command => {
       const button = document.createElement('button');
       button.type='button'; button.className='command-option'; button.textContent=command.name;
-      button.addEventListener('click',()=>{close(false);command.run()});
+      button.addEventListener('click',()=>{close();command.run()});
       results.append(button);
     });
     if(!matching.length){const empty=document.createElement('p');empty.textContent='No matching commands';results.append(empty)}
